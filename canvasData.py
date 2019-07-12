@@ -18,7 +18,7 @@ sys.stderr = open('/data/informatica/canvas/log/' + logFile + '.error', 'w')
 sys.stdout = open('/data/informatica/canvas/log/' + logFile + '.log', 'w')
  
 # 1 - Sync the data from Canvas 
-#sync_data_from_canvas() 
+sync_data_from_canvas()
 
 #  2 - Get Table Lists
 canvas_table = get_canvas_table_list()
@@ -27,7 +27,7 @@ master_table = get_master_table_list()
 #  3 - unpack each file
 unpack_canvas_data(master_table)
 
-#clean_canvas_files(master_table)
+clean_canvas_files(master_table)
 
 #  4 - error checking
 # check_for_issues(canvas_table, master_table)

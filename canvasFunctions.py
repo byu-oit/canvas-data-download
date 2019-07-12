@@ -2,26 +2,23 @@ import json
 import subprocess
 import numpy as np
 
+
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 def get_master_table_list():
-    # change this function to read from a file ???
+    # change this function to read from a config file ???
     
     with open('/data/informatica/canvas/master_table_list.txt') as f:
         lines = f.read().splitlines()
     
     # remove any lines commented out 
-    cleanedlines = [c for c in lines if c[0] != '#']
-    
-    return sorted(cleanedlines)
+    cleaned_lines = [c for c in lines if c[0] != '#']
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+    return cleaned_lines  # Don't sort the list. We want requests to be at the end because it takes so long.
 
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-
 def unpack_canvas_data(table_list):
     print('---------')
     print('Unpack Canvas Data ')
@@ -30,14 +27,12 @@ def unpack_canvas_data(table_list):
         print('---------')
         print(table)
         command = 'canvasDataCli unpack -c /data/informatica/canvas/config.js -f ' + table
-        # subprocess.run(command, shell='true')  
-        subprocess.call(command, shell='true')  
-        # print(command)
+        subprocess.call(command, shell=True)
+        print(command)
 
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-
 def clean_canvas_files(table_list):
     ucf = '/data/informatica/canvas/UnpackedCanvasFiles/'
     print('---------')
@@ -49,15 +44,11 @@ def clean_canvas_files(table_list):
         command = "sed 's#\\\\N##g'" + ' ' + ucf + table + '.txt > clean.txt'
         # print(command)
         # command = 'canvasDataCli unpack -c config.js -f ' + table
-        # subprocess.run(command, shell='true')  
-        subprocess.call(command, shell='true')  
+        # subprocess.run(command, shell=True)  
+        subprocess.call(command, shell=True)  
         command = 'mv clean.txt ' + ucf + table + '.txt'
         # print(command)
-        subprocess.call(command, shell='true')  
-
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+        subprocess.call(command, shell=True)  
 
 
 # ------------------------------------------------------------------------------
@@ -72,20 +63,15 @@ def check_for_issues(canvas_table, master_table):
         # print('The Master Table List is not the same as Canvas Table List')
         not_in_canvas_list = np.setdiff1d(master_table, canvas_table)
         not_in_master_list = np.setdiff1d(canvas_table, master_table)
-        if (len(not_in_master_list) > 0):
+        if len(not_in_master_list) > 0:
             print('The following tables are not in our master list:')
             print(not_in_master_list)
             print(' ')
         
-        if (len(not_in_canvas_list) > 0):
+        if len(not_in_canvas_list) > 0:
             print('The following tables are not in the Canvas list:')
             print(not_in_canvas_list)
             print(' ')    
-    
-    
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-
 
 
 # ------------------------------------------------------------------------------
@@ -95,16 +81,8 @@ def sync_data_from_canvas():
     print('Lets Sync Data From Canvas ')
     print('---------')
     command = 'canvasDataCli sync -c /data/informatica/canvas/config.js'
-    # subprocess.run(command, shell='true') 
-    subprocess.call(command, shell='true') 
+    subprocess.call_output(command, shell=True)
     
-    
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-
-
-
-
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -119,7 +97,3 @@ def get_canvas_table_list():
     
     # canvas_table = list(canvasschema['schema'].keys())
     return sorted(list(canvasschema['schema'].keys()))
-
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-
